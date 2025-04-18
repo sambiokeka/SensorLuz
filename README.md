@@ -41,6 +41,4 @@ O projeto utiliza um LDR (sensor de luz) para medir a intensidade da luz ambient
 2. Faça o upload do código para o Arduino UNO usando a IDE Arduino.
 3. Conecte o circuito ao computador ou a uma fonte de alimentação e observe o comportamento dos LEDs e do buzzer com base na luminosidade.
 
-## Contribuição
 
-Contribuições são bem-vindas! Se você tiver sugestões ou melhorias, sinta-se à vontade para abrir uma issue ou um pull request.
