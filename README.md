@@ -44,7 +44,3 @@ O projeto utiliza um LDR (sensor de luz) para medir a intensidade da luz ambient
 ## Contribuição
 
 Contribuições são bem-vindas! Se você tiver sugestões ou melhorias, sinta-se à vontade para abrir uma issue ou um pull request.
-
-## Licença
-
-Este projeto está licenciado sob a licença MIT. Veja o arquivo `LICENSE` para mais detalhes.
