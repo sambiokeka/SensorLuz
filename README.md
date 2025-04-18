@@ -1,4 +1,4 @@
-# SensorLuz
+# Sensor de Luz
 
 Este projeto utiliza um sensor de luz (LDR) integrado com Arduino UNO para controlar LEDs e um buzzer com base em diferentes condições de luminosidade.
 
