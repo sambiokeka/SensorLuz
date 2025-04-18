@@ -20,17 +20,25 @@ bool beepAtivo = false;
 
 //Função mil QI para ligar um ledo só
 void acendeSomente(int led) {
+
   digitalWrite(vermelho, led == 10 ? HIGH : LOW);
+
   digitalWrite(amarelo,  led == 9  ? HIGH : LOW);
+
   digitalWrite(verde,  led == 8  ? HIGH : LOW); 
+
 }
 
 //Setups das entradas, os analog n precisa
 void setup() {
   pinMode(buzina, OUTPUT);
+
   pinMode(vermelho, OUTPUT);
+
   pinMode(amarelo, OUTPUT);
+
   pinMode(verde, OUTPUT);
+  
 }
 
 
