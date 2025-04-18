@@ -101,7 +101,7 @@ void loop() {
             ultimoBeep = agora;//Temporizador para os beeps
 
             //Se tiver tocando os beeps
-            if (beepAtivo = true) {
+            if (beepAtivo) {
                 
                 noTone(buzina);//Desliga a buzina
                 
@@ -111,8 +111,10 @@ void loop() {
                 
             }
 
-            beepAtivo = false;//Não esta tocando os beeps
+            beepAtivo = !beepAtivo;//Não esta tocando os beeps
         
         }
     }
 }
+
+
