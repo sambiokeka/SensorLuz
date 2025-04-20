@@ -5,9 +5,13 @@ Este projeto utiliza um sensor de luz (LDR) integrado com Arduino UNO para contr
 ## Autores
 
 -Erick Jooji (RM: 564482)
+
 -Guilherme Godoy (RM: 564417)
+
 -Luiz Dalboni (RM: 564189)
+
 -Matheus Tozarelli (RM: 563490)
+
 -Rafael Lorenzini (RM: 563643)
 
 ## Ferramentas e Tecnologias
