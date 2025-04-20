@@ -35,6 +35,10 @@ O projeto utiliza um LDR (sensor de luz) para medir a intensidade da luz ambient
 - **Média luminosidade:** O LED amarelo acende.
 - **Baixa luminosidade:** O LED vermelho acende e o buzzer é ativado.
 
+## Código
+
+Luiz coloca aq a explicação do código
+
 ## Como Executar
 
 1. Monte o circuito seguindo o esquema fornecido no [Tinkercad](https://www.tinkercad.com/things/c1h5FtxbSvR/editel?returnTo=%2Fdashboard).
