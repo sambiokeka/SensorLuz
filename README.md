@@ -4,15 +4,11 @@ Este projeto utiliza um sensor de luz (LDR) integrado com Arduino UNO para contr
 
 ## Autores
 
--Erick Jooji (RM: 564482)
-
--Guilherme Godoy (RM: 564417)
-
--Luiz Dalboni (RM: 564189)
-
--Matheus Tozarelli (RM: 563490)
-
--Rafael Lorenzini (RM: 563643)
+- Erick Jooji (RM: 564482)
+- Guilherme Godoy (RM: 564417)
+- Luiz Dalboni (RM: 564189)
+- Matheus Tozarelli (RM: 563490)
+- Rafael Lorenzini (RM: 563643)
 
 ## Ferramentas e Tecnologias
 
@@ -22,9 +18,9 @@ Este projeto utiliza um sensor de luz (LDR) integrado com Arduino UNO para contr
 
 ## Componentes Utilizados
 
-- **1** Resistor de 10kΩ (LDR, utilize valores menores no resistor caso queira que o LDR retorne valores também)
-- **1** Resistor de 1kΩ (Buzzer)
-- **3** Resistores de 220Ω (3 LEDs)
+- **1** Resistor de 10kΩ (para o LDR)
+- **1** Resistor de 1kΩ (para o Buzzer)
+- **3** Resistores de 220Ω (para os LEDs)
 - **11** Jumpers
 - **3** LEDs (Vermelho, Amarelo, Verde)
 - **1** Buzzer
@@ -32,103 +28,137 @@ Este projeto utiliza um sensor de luz (LDR) integrado com Arduino UNO para contr
 
 ## Como Funciona
 
-O projeto utiliza um LDR (sensor de luz) para medir a intensidade da luz ambiente. Com base nos valores medidos, o Arduino controla LEDs e um buzzer para indicar diferentes condições de luminosidade. 
+O projeto utiliza um LDR (sensor de luz) para medir a intensidade da luz ambiente. Com base nos valores medidos, o Arduino controla LEDs e um buzzer para indicar diferentes condições de luminosidade.
 
 ### Exemplo de Funcionamento:
-- **luminosidade IDEAL:** O LED verde acende.
-- **luminosidade em ALERTA:** O LED amarelo acende.
-- **luminosidade com PROBLEMAS:** O LED vermelho acende e o buzzer é ativado.
 
-## Código
+- **Luminosidade IDEAL**: O LED verde acende.
+- **Luminosidade em ALERTA**: O LED amarelo acende e o buzzer toca intermitentemente.
+- **Luminosidade com PROBLEMAS**: O LED vermelho acende e o buzzer pode ser configurado para emitir um sinal contínuo (desativado por padrão).
 
-(linhas 1 à 7)
-Entradas dos leds.
+---
 
-(linha 11 à 22)
-Depois temos variáveis, que serão utilizadas na função do
-void loop,  elas servem para ativar ou desativar a buzina.
-Nesta mesma parte temos um codigo comentado que serve para 
-a buzina vermelha, que esta desativada, dado a sua falta de 
-necessidade.
+## Código Explicado
 
-(linhas 27 à 31)
-Utilizamos uma função que facilita ligar e desligar leds,
-por exemplo ao invez de digitar isto para cada uma das situações:
-  "digitalWrite(vermelho, HIGH);
-  digitalWrite(amarelo, LOW);
-  digitalWrite(verde, LOW);"
-A função acendeSomente faz isso sem precisar de quase 9 linhas,
-como seria, aplicando para cada uma das situações, no exemplo dado.
-Então só utilizamos uma linha para ativar 1 led e os outros ficam desativados:
-  "acendeSomente(vermelho);"
+### Estrutura do Código
 
-  
-(linhas 34 à 40)
-Após isso temos os Setups.
+1. **Configuração de LEDs e Buzzer**:
+   - Os LEDs (vermelho, amarelo e verde) e o buzzer estão atribuídos a pinos digitais específicos.
+   - Funções auxiliares controlam o estado dos LEDs e do buzzer.
 
+2. **Função `acendeSomente`**:
+   - Simplifica o controle dos LEDs, ativando apenas o LED correspondente à condição atual e desligando os outros dois.
 
-(linhas 44 à 141)
-Temos o void loop, que faz o sensor de luz funcionar.
+3. **Lógica Principal (`void loop`)**:
+   - O programa lê o valor do LDR para determinar a luminosidade ambiente.
+   - Com base no valor lido, as condições **IDEAL**, **ALERTA** ou **PROBLEMA** são determinadas por meio de estruturas `if-else`.
 
-  Dentro do void loop:
-  
-  (linhas 46 à 54)
-  Declaramos 6 variáveis:
-  1 para o analogRead do LDR;
-  2 para os valores de luz ideal minima e maxima;
-  2 para as margens de erro que ativarão o estado de ALERTA;
-  1 para contagem de tempo, o nome dela é "agora" (será útil depois para controlar o tempo da buzina tocada no estado de ALERTA).
+---
 
-  (linha 56)
-  É utilizado um Serial.println para acompanhar os valores que o LDR esta retornando.
+### Detalhamento por Trechos de Código
 
-  (linhas 59 até 138)
-  Temos a lógica útilizada para verificar qual situação o LDR está (if, else if e else):
-  <br>
-    (linhas 59 à 67)
-    Dentro do if, é verificado se o valor lido pelo LDR está dentro dos valores colocados como ideal minimo e ideal maximo de luz, se estiver:
-      IDEAL:
-        -Desliga qualquer buzina que estivesse tocando antes de entrar na situação IDEAL;
-        -Liga (os outros dois desligam se estavam ligados) e é inserimos o valor de uma variavel como false,  "naoPodetocar = false;" esta variável servira para quando estivermos na situação ALERTA.
-        <br>
-        <br>
-    (linhas 70 à 103)
-    Dentro do else if, é verificado se o valor lido pelo LDR esta fora do ideal máximo mas dentro da margem de erro máxima, ou se esta fora do ideal mínimo mas dentro da margem de erro mínima, se estiver:
-      ALERTA:
-        -A mais complicadinha de todas, ela verifica uma série de valores, mas primeiro de tudo.
-        -Liga o LED amarelo (desligando os outros 2 se estavam ligados);
-        (linhas 75 à 84)
-        -Verifica se o valor da váriavel "naoPodeTocar" está como false, se estiver:
-            --Liga a buzina;
-            --Coloca o valor da váriavel "tempoAnterior" como o mesmo valor da variável agora, isso servira pouco abaixo, para que de 3 em 3 segundos algo aconteça;
-            --Coloca o valor da váriavel "buzinaLigada" como true, ela servira pouco abaixo para a lógica do que acontecera de 3 em 3 segundos;
-            --Por fim coloca o valor da variável "naoPodetocar" como true, para que enquanto o código estiver na situação ALERTA, ela não fique ativando o que esta dentro do "if(naoPodeTocar == false)"
-            <br>
-            <br>
-        (linhas 87 a 102)
-        -Verifica se tempoAnterior-agora é igual a 3000 milisegundos, se for:
-          --faz com que o "tempoAnterior" seja novamente igual ao valor de "agora", para que esse if continue sempre (enquanto estivermos na situação de ALERTA, é claro) de 3 em 3 segundos;
-          --Verifica se a variavel "buzinaLigada" é igual a true (ou seja que a buzina está tocando), se for:
-          --desliga a buzina e coloca o valor de "buzinaLigada" como false.
-        -Caso "buzinaLigada" não seja true, ele faz:
-          --A buzina ligar;
-          --Coloca o valor da variável "buzinaLigada" como true.
-         
-  (linhas 107 à 138)
-  Caso nem o if da situação IDEAL, nem o else if da situação ALERTA, forem verdade, ele faz:
-    PROBLEMA:
-    -Liga o LED vermelho (desliga os outros 2 se estavam ligados);
-    -Faz com que naoPodeTocar seja false (Agora que vimos a situação ALERTA, posso explicar de forma mais simples, dentro da propria situação ALERTA, a primeira coisa que é feita é verificar se naoPodeTocar é false, se for ativa uma serie de coisas,
-    e coloca o valor dessa mesma variavel como true, e até o fim da situação ALERTA, isso não é mudado, ou seja, caso ocorra uma troca de situações e o naoPodeTocar continue como true, ex: ALERTA>PROBLEMA>ALERTA, somente o primeiro ALERTA ativaria essa serie de coisas, sendo uma delas a buzina,
-    depois disso quando fosse trocado para a situação PROBLEMA e depois para o ALERTA de novo, o ALERTA não ativaria as coisas da maneira devida);
-    -Desliga qualquer buzina que estivesse tocando anteriormente.
-    
+#### **Configuração Inicial (`setup`)**
+```cpp
+void setup() {
+  Serial.begin(9600);  // Inicializa o monitor serial para debug
+  pinMode(buzina, OUTPUT);  // Define o buzzer como saída
+  pinMode(vermelho, OUTPUT);  // Define o LED vermelho como saída
+  pinMode(amarelo, OUTPUT);  // Define o LED amarelo como saída
+  pinMode(verde, OUTPUT);  // Define o LED verde como saída
+}
+```
 
+#### **Função Auxiliar: `acendeSomente`**
+```cpp
+void acendeSomente(int led) {
+  digitalWrite(vermelho, led == 10 ? HIGH : LOW);
+  digitalWrite(amarelo,  led == 9 ? HIGH : LOW);
+  digitalWrite(verde,    led == 8 ? HIGH : LOW); 
+}
+```
+Essa função ativa apenas o LED indicado e garante que os outros dois LEDs estejam desligados.
+
+---
+
+#### **Lógica Principal (`void loop`)**
+
+1. **Leitura da Luminosidade**
+   ```cpp
+   int luz = analogRead(A0);  // Lê o valor do LDR
+   int ideal_min = 900;
+   int ideal_max = 950;
+   int margem_erroMAX = 970;
+   int margem_erroMIN = 100;
+   unsigned long agora = millis();  // Tempo atual do loop
+   ```
+   - Os valores de luminosidade são comparados com os limites definidos para determinar o estado atual.
+
+2. **Condição IDEAL**
+   ```cpp
+   if (luz >= ideal_min && luz <= ideal_max) {
+       acendeSomente(verde);  // Liga o LED verde
+       noTone(buzina);  // Desliga o buzzer
+       naoPodetocar = false;  // Libera o estado para tocar o alerta no futuro
+   }
+   ```
+   - Indica que a luminosidade está no intervalo ideal. Apenas o LED verde é ligado.
+
+3. **Condição ALERTA**
+   ```cpp
+   else if ((luz > ideal_max && luz < margem_erroMAX) || (luz < ideal_min && luz > margem_erroMIN)) {
+       acendeSomente(amarelo);  // Liga o LED amarelo
+
+       if (!naoPodetocar) {
+           tone(buzina, 200);  // Toca o buzzer a 200 Hz
+           tempoAnterior = agora;  // Atualiza o temporizador
+           buzinaLigada = true;
+           naoPodetocar = true;  // Impede reativação imediata do alerta
+       }
+
+       if (agora - tempoAnterior >= 3000) {
+           tempoAnterior = agora;
+           if (buzinaLigada) {
+               noTone(buzina);  // Desliga o buzzer
+               buzinaLigada = false;
+           } else {
+               tone(buzina, 200);  // Liga o buzzer
+               buzinaLigada = true;
+           }
+       }
+   }
+   ```
+
+4. **Condição PROBLEMA**
+   ```cpp
+   else {
+       acendeSomente(vermelho);  // Liga o LED vermelho
+       naoPodetocar = false;  // Reseta a variável de controle do alerta
+       noTone(buzina);  // Desativa qualquer som do buzzer
+       
+       // Caso queira habilitar o som para PROBLEMA, descomente o trecho abaixo:
+       /*
+       if (agora - ultimoBeep >= 1000) {
+           ultimoBeep = agora;
+           if (beepAtivo) {
+               noTone(buzina);  // Desliga o buzzer
+           } else {
+               tone(buzina, 1000);  // Liga o buzzer a 1000 Hz
+           }
+           beepAtivo = !beepAtivo;  // Alterna o estado do beep
+       }
+       */
+   }
+   ```
+
+---
 
 ## Como Executar
 
 1. Monte o circuito seguindo o esquema fornecido no [Tinkercad](https://www.tinkercad.com/things/c1h5FtxbSvR/editel?returnTo=%2Fdashboard).
 2. Faça o upload do código para o Arduino UNO usando a IDE Arduino.
-3. Conecte o circuito ao computador ou a uma fonte de alimentação e observe o comportamento dos LEDs e do buzzer com base na luminosidade.
+3. Conecte o circuito ao computador ou a uma fonte de alimentação.
+4. Observe o comportamento dos LEDs e do buzzer com base na intensidade de luz.
 
+---
 
+Com esta estrutura, o código está mais claro e modular, facilitando a compreensão e possíveis modificações. 🚀
