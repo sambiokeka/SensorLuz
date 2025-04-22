@@ -159,6 +159,4 @@ Essa função ativa apenas o LED indicado e garante que os outros dois LEDs este
 3. Conecte o circuito ao computador ou a uma fonte de alimentação.
 4. Observe o comportamento dos LEDs e do buzzer com base na intensidade de luz.
 
----
 
-Com esta estrutura, o código está mais claro e modular, facilitando a compreensão e possíveis modificações. 🚀
