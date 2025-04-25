@@ -14,8 +14,6 @@ bool buzinaLigada = false;
 
 bool naoPodetocar = false;
 
-unsigned long intervalo = 3000;
-
 /* para buzina do vermelho
 unsigned long ultimoBeep = 0;
 
