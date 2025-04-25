@@ -21,7 +21,7 @@ Este projeto utiliza um sensor de luz (LDR) integrado com Arduino UNO para contr
 - **1** Resistor de 10kΩ (para o LDR)
 - **1** Resistor de 1kΩ (para o Buzzer)
 - **3** Resistores de 220Ω (para os LEDs)
-- **11** Jumpers
+- **9** Jumpers
 - **3** LEDs (Vermelho, Amarelo, Verde)
 - **1** Buzzer
 - **1** LDR (Sensor de Luz)
