@@ -14,7 +14,7 @@ Este projeto utiliza um sensor de luz (LDR) integrado com Arduino UNO para contr
 
 - **Linguagem de programação:** C++
 - **Placa:** Arduino UNO
-- **Simulação:** [Tinkercad - Projeto SensorLuz]([https://www.tinkercad.com/things/c1h5FtxbSvR/editel?returnTo=%2Fdashboard](https://www.tinkercad.com/things/c1h5FtxbSvR/editel?returnTo=%2Fdashboard&classId=61ce3daf-e9a6-49bd-91bb-a29ab66ae1d3&assignmentId=8ca11dbd-a233-45ac-8140-88877fc2df04&submissionId=6a8c72ea-fb7b-863b-47da-6bf3e5e043a8&sharecode=ZvjRef9xMrJKNGLz6X485Ed7jBBOPLuEBe1Sdcigd8c))
+- **Simulação:** [Tinkercad - Projeto SensorLuz]([https://www.tinkercad.com/things/c1h5FtxbSvR/editel?returnTo=%2Fdashboard](https://www.tinkercad.com/things/c1h5FtxbSvR/editel?returnTo=%2Fdashboard&classId=61ce3daf-e9a6-49bd-91bb-a29ab66ae1d3&assignmentId=8ca11dbd-a233-45ac-8140-88877fc2df04&submissionId=6a8c72ea-fb7b-863b-47da-6bf3e5e043a8&sharecode=ZvjRef9xMrJKNGLz6X485Ed7jBBOPLuEBe1Sdcigd8c])
 
 
 ## Componentes Utilizados
