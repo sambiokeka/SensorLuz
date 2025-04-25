@@ -45,9 +45,10 @@ void loop() {
   	
     int ideal_min = 900;
    	int ideal_max = 950;  
-  
-  	int margem_erroMAX = 970;
+	
   	int margem_erroMIN = 100;
+  	int margem_erroMAX = 970;
+  	
     
     unsigned long agora = millis();//Tempo do loop
   
