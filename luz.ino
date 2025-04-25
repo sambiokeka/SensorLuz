@@ -6,51 +6,57 @@ int verde = 8;
 
 int buzina = 7;
 
+
+//Variáveis que vão ser usadas depois
 unsigned long tempoAnterior = 0;
 
 bool buzinaLigada = false;
 
 bool naoPodetocar = false;
 
-unsigned long ultimoBeep = 0;
-
 unsigned long intervalo = 3000;
 
+/* para buzina do vermelho
+unsigned long ultimoBeep = 0;
+
 bool beepAtivo = false;
+*/
 
-//Função mil QI para ligar um ledo só
+
+//Função mil QI para ligar um led só
 void acendeSomente(int led) {
-
   digitalWrite(vermelho, led == 10 ? HIGH : LOW);
-
   digitalWrite(amarelo,  led == 9  ? HIGH : LOW);
-
   digitalWrite(verde,  led == 8  ? HIGH : LOW); 
-
 }
 
 //Setups das entradas, os analog n precisa
 void setup() {
+  Serial.begin(9600);
   pinMode(buzina, OUTPUT);
-
   pinMode(vermelho, OUTPUT);
-
   pinMode(amarelo, OUTPUT);
-
   pinMode(verde, OUTPUT);
-  
 }
 
 
 //Loop legal e maneiro
 void loop() {
-    
-    int luz = analogRead(A0); //Luz recebe o valor do LDR
+
+  	int luz = analogRead(A0); //Luz recebe o valor do LDR
+  	
+    int ideal_min = 900;
+   	int ideal_max = 950;  
+  
+  	int margem_erroMAX = 970;
+  	int margem_erroMIN = 100;
     
     unsigned long agora = millis();//Tempo do loop
-    
-    //OK
-    if (luz < 600) {
+  
+    Serial.println(luz);
+        
+    //IDEAL / OK
+    if (luz >= ideal_min && luz <= ideal_max) {
         
         acendeSomente(verde);//Verde 
         
@@ -61,7 +67,7 @@ void loop() {
     } 
     
     //ALERTA
-    else if (luz < 900) {
+    else if ((luz > ideal_max && luz < margem_erroMAX) || (luz < ideal_min && luz > margem_erroMIN) ) {
         
         acendeSomente(amarelo);//Amarelo
         
@@ -70,7 +76,7 @@ void loop() {
         
             tone(buzina, 200);// Toca instantaneamente
         
-            tempoAnterior = agora;// Começa a contar os 3 segundos
+            tempoAnterior = agora;//Faz o tempoAnterior ser igual ao agora
         
             buzinaLigada = true;//A buzina esta ligada
         
@@ -85,17 +91,17 @@ void loop() {
             if (buzinaLigada) {
                 
                 noTone(buzina);//Se a buzina estiver ligada ela é desligada
+             	buzinaLigada = false; // Atualiza o estado da buzina
             
             } else {
                 
                 tone(buzina, 200);//Se não liga ela
+                buzinaLigada = true; // Atualiza o estado da buzina
                 
-            }
-            
-            buzinaLigada = false;//Buzina não esta ligada
-        
+            }       
         }
     } 
+
     
     //PROBLEMA
     else {
@@ -103,10 +109,15 @@ void loop() {
         acendeSomente(vermelho);//Vermelho
         
         naoPodetocar = false;//Buzina de 3 segundos pode tocar
+      	
+      	noTone(buzina);
+      
+        /* CASO VERMELHO DEVA TOCAR BUZINA
         
-        if (agora - ultimoBeep >= 100) {
+        if (agora - ultimoBeep >= 0) {
         
             ultimoBeep = agora;//Temporizador para os beeps
+          
 
             //Se tiver tocando os beeps
             if (beepAtivo) {
@@ -115,13 +126,15 @@ void loop() {
                 
             } else {
                 
-                tone(buzina, 500);//Liga a buzina
+                tone(buzina, 1000);//Liga a buzina
                 
             }
-
+                                   	         
             beepAtivo = !beepAtivo;//Não esta tocando os beeps
-        
+            
+         
         }
+		*/         
     }
 }
 
