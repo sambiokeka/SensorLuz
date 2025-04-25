@@ -87,8 +87,8 @@ Essa função ativa apenas o LED indicado e garante que os outros dois LEDs este
    int luz = analogRead(A0);  // Lê o valor do LDR
    int ideal_min = 900;
    int ideal_max = 950;
-   int margem_erroMAX = 970;
    int margem_erroMIN = 100;
+   int margem_erroMAX = 970;
    unsigned long agora = millis();  // Tempo atual do loop
    ```
    - Os valores de luminosidade são comparados com os limites definidos para determinar o estado atual.
