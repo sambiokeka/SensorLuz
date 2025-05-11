@@ -1,19 +1,16 @@
 #include <LiquidCrystal_I2C.h>
 #include <Wire.h>
-#include <idDHT11pin.h>
+#include <DHT.h>
+#define DHTPIN 2     
+#define DHTTYPE DHT11
 #define col 16
 #define lin 2
 #define ende 0x27
 
 LiquidCrystal_I2C lcd(ende, col, lin);
 
-int idDHT11pin = 2;
-int idDHT11intNumber = 0;
-
-void dht11_wrapper();
-void loopDHT();
-
-idDHT11 DHT11(idDHT11pin, idDHT11intNumber, dht11_wrapper);
+DHT dht(DHTPIN, DHTTYPE);
+int humidade;
 
 int vermelhoLUZ = 10;
 int amareloLUZ = 9;
@@ -48,13 +45,11 @@ int luzIndex = 0;
 int temperaturaIndex = 0;
 int umidadeIndex = 0;
 
-float umidade = 50.0; 
-
 void inicializaBuffers() {
   for (int i = 0; i < 5; i++) {
     luzBuffer[i] = map(analogRead(A0), 6, 679, 0, 100);
     temperaturaBuffer[i] = map(analogRead(A1), 20, 358, -40, 125);
-    umidadeBuffer[i] = 50;
+    umidadeBuffer[i] = map(analogRead(A2), 0, 1023, 0, 100);
   }
 }
 
@@ -158,6 +153,7 @@ void processaTEMPERATURA(float temperaturaMedia) {
   }
 }
 
+
 void processaUMIDADE(float umidadeMedia) {
   int ideal_min = 50;
   int ideal_max = 70;
@@ -241,61 +237,40 @@ void atualizaDisplay(float luzMedia, float temperaturaMedia, float umidadeMedia)
   }
 }
 
-void dht11_wrapper() {
-  DHT11.isrCallback();
-}
-
-void loopDHT() {
-#define tempoLeitura 1000
-static unsigned long delayLeitura = 0;
-
-if (millis() - delayLeitura >= tempoLeitura) {
-  delayLeitura = millis();
-  DHT11.acquire();
-
-  if (!DHT11.acquiring()) {
-    if (DHT11.getStatus() == IDDHTLIB_OK) {
-      float valor = DHT11.getHumidity();
-      if (!isnan(valor)) {
-        umidade = valor;
-      } else {
-        Serial.println("Erro ao ler umidade. Mantendo valor anterior.");
-      }
-    } else {
-      Serial.println("Erro ao adquirir dados do sensor DHT11.");
-    }
-  }
-}
-}
-
 void setup() {
   Serial.begin(9600);
+  dht.begin();
+
   lcd.init();
   lcd.backlight();
   lcd.clear();
 
   pinMode(buzina, OUTPUT);
+
   pinMode(vermelhoLUZ, OUTPUT);
   pinMode(amareloLUZ, OUTPUT);
   pinMode(verdeLUZ, OUTPUT);
+
   pinMode(vermelhoTEMPERATURA, OUTPUT);
   pinMode(verdeTEMPERATURA, OUTPUT);
+
   pinMode(vermelhoUMIDADE, OUTPUT);
   pinMode(verdeUMIDADE, OUTPUT);
 
   inicializaBuffers();
 }
 
+
 void loop() {
-  loopDHT();
-  
   int luz = analogRead(A0);
   int temperatura = analogRead(A1);
+  humidade = dht.readHumidity();
 
   int luzAjustada = map(constrain(luz, 6, 679), 6, 679, 0, 100);
   int temperaturaAjustada = map(constrain(temperatura, 20, 358), 20, 358, -40, 125);
-  int umidadeAjustada = constrain(umidade, 0, 100);
-
+  // int umidadeAjustada = map(constrain(umidade, 0, 1023), 0, 1023, 0, 100);
+  int umidadeAjustada = umidade;
+  Serial.println(umidade);
   float luzMedia, temperaturaMedia, umidadeMedia;
   atualizaMedias(luzAjustada, temperaturaAjustada, umidadeAjustada, luzMedia, temperaturaMedia, umidadeMedia);
 
