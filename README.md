@@ -79,142 +79,40 @@ O projeto utiliza sensores de luz, temperatura e umidade para avaliar as condiç
 7. **Atualização do Display LCD**:
    - Exibe no LCD as condições ambientais atuais para a luminosidade, temperatura e umidade.
 
----
+8. **Cálculo de Médias de Valores**:
+   - **Buffers de Leitura**: Cada sensor (luz, temperatura, umidade) utiliza um buffer circular de 5 leituras para calcular a média.
+   - **Cálculo da Média**:
+     ```cpp
+     float calculaMedia(int buffer[], int tamanho) {
+       int soma = 0;
+       for (int i = 0; i < tamanho; i++) {
+         soma += buffer[i];
+       }
+       return soma / (float)tamanho;
+     }
+     ```
+     - Essa abordagem reduz flutuações nas leituras, garantindo maior confiabilidade nos valores monitorados.
 
-### Detalhamento por Trechos de Código
+9. **Atualização de Valores no Buffer**:
+   - **Lógica**:
+     As novas leituras são inseridas no buffer, substituindo as mais antigas de forma circular:
+     ```cpp
+     void atualizaMedias(int luz, int temperatura, int umidade, float &luzMedia, float &temperaturaMedia, float &umidadeMedia) {
+       luzBuffer[luzIndex] = luz; // Atualiza buffer de luz
+       luzIndex = (luzIndex + 1) % 5; // Incrementa o índice de forma circular
 
-#### Configuração Inicial (`setup`)
-```cpp
-void setup() {
-  Serial.begin(9600);
+       temperaturaBuffer[temperaturaIndex] = temperatura; // Atualiza buffer de temperatura
+       temperaturaIndex = (temperaturaIndex + 1) % 5;
 
-  lcd.init();
-  lcd.backlight();
-  lcd.clear();
+       umidadeBuffer[umidadeIndex] = umidade; // Atualiza buffer de umidade
+       umidadeIndex = (umidadeIndex + 1) % 5;
 
-  pinMode(buzina, OUTPUT);
-
-  pinMode(vermelhoLUZ, OUTPUT);
-  pinMode(amareloLUZ, OUTPUT);
-  pinMode(verdeLUZ, OUTPUT);
-
-  pinMode(vermelhoTEMPERATURA, OUTPUT);
-  pinMode(verdeTEMPERATURA, OUTPUT);
-
-  pinMode(vermelhoUMIDADE, OUTPUT);
-  pinMode(verdeUMIDADE, OUTPUT);
-
-  inicializaBuffers();
-}
-```
-
-#### Cálculo de Média com Buffers
-```cpp
-float calculaMedia(int buffer[], int tamanho) {
-  int soma = 0;
-  for (int i = 0; i < tamanho; i++) {
-    soma += buffer[i];
-  }
-  return soma / (float)tamanho;
-}
-```
-- Essa função calcula a média dos valores armazenados no buffer, permitindo maior estabilidade nas leituras.
-
-#### Controle da Luminosidade (`processaLUZ`)
-```cpp
-void processaLUZ(float luzMedia, unsigned long agora) {
-  int ideal_min = 0;
-  int ideal_max = 40;
-  int margem_erroMIN = 0;
-  int margem_erroMAX = 60;
-
-  if (luzMedia >= ideal_min && luzMedia <= ideal_max) {
-    acendeSomenteLUZ(verdeLUZ);
-    noTone(buzina);
-    naoPodetocar = false;
-    casoAtualLUZ = "OK";
-  } else if ((luzMedia > ideal_max && luzMedia < margem_erroMAX) || (luzMedia < ideal_min && luzMedia > margem_erroMIN)) {
-    acendeSomenteLUZ(amareloLUZ);
-    if (naoPodetocar == false) {
-      tone(buzina, 200);
-      tempoAnterior = agora;
-      buzinaLigada = true;
-      naoPodetocar = true;
-    }
-    if (agora - tempoAnterior >= 3000) {
-      tempoAnterior = agora;
-      if (buzinaLigada) {
-        noTone(buzina);
-        buzinaLigada = false;
-      } else {
-        tone(buzina, 200);
-        buzinaLigada = true;
-      }
-    }
-    casoAtualLUZ = "ALERTA";
-  } else {
-    acendeSomenteLUZ(vermelhoLUZ);
-    naoPodetocar = false;
-    noTone(buzina);
-    tone(buzina, 2000);
-    casoAtualLUZ = "PROBLEMA";
-  }
-}
-```
-
-#### Atualização do Display LCD
-```cpp
-void atualizaDisplay(float luzMedia, float temperaturaMedia, float umidadeMedia) {
-  unsigned long agora = millis();
-
-  if (agora - tempoDisplayAnterior >= 5000) {
-    tempoDisplayAnterior = agora;
-    estadoDisplay = (estadoDisplay + 1) % 3;
-  }
-
-  String linha1, linha2;
-
-  switch (estadoDisplay) {
-    case 0:
-      linha1 = "Luz: " + String(luzMedia, 1) + "%";
-      linha2 = (casoAtualLUZ == "OK") ? "Luz Ideal!" : 
-               (casoAtualLUZ == "ALERTA") ? "Meia Luz!" : 
-               "Muita Luz!";
-      break;
-
-    case 1:
-      linha1 = "Temp.: " + String(temperaturaMedia, 1) + "C";
-      linha2 = (casoAtualTEMPERATURA == "OK") ? "Temp. Ideal!" : 
-               (casoAtualTEMPERATURA == "BAIXA") ? "Temp. Baixa!" : 
-               "Temp. Alta!";
-      break;
-
-    case 2:
-      linha1 = "Umidade: " + String(umidadeMedia, 1) + "%";
-      linha2 = (casoAtualUMIDADE == "OK") ? "Umidade Ideal!" : 
-               (casoAtualUMIDADE == "BAIXA") ? "Umidade Baixa!" : 
-               "Umidade Alta!";
-      break;
-  }
-
-  if (linha1 != textoAnteriorLinha1) {
-    lcd.setCursor(0, 0);
-    lcd.print("                ");
-    lcd.setCursor(0, 0);
-    lcd.print(linha1);
-    textoAnteriorLinha1 = linha1;
-  }
-
-  if (linha2 != textoAnteriorLinha2) {
-    lcd.setCursor(0, 1);
-    lcd.print("                ");
-    lcd.setCursor(0, 1);
-    lcd.print(linha2);
-    textoAnteriorLinha2 = linha2;
-  }
-}
-```
-
+       // Calcula as médias
+       luzMedia = calculaMedia(luzBuffer, 5);
+       temperaturaMedia = calculaMedia(temperaturaBuffer, 5);
+       umidadeMedia = calculaMedia(umidadeBuffer, 5);
+     }
+     ```
 ---
 
 ## Como Executar
