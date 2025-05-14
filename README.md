@@ -1,6 +1,6 @@
 # Sensor de Luz
 
-Este projeto utiliza um sensor de luz (LDR) integrado com Arduino UNO para controlar LEDs e um buzzer com base em diferentes condições de luminosidade.
+Este projeto utiliza um sensor de luz (LDR) integrado com Arduino UNO para controlar LEDs e um buzzer com base em diferentes condições de luminosidade, temperatura e umidade.
 
 ## Autores
 
@@ -13,8 +13,7 @@ Este projeto utiliza um sensor de luz (LDR) integrado com Arduino UNO para contr
 
 - **Linguagem de programação:** C++
 - **Placa:** Arduino UNO
-- **Simulação:** [Tinkercad - Projeto SensorLuz]([https://www.tinkercad.com/things/c1h5FtxbSvR/editel?returnTo=%2Fdashboard&classId=61ce3daf-e9a6-49bd-91bb-a29ab66ae1d3&assignmentId=8ca11dbd-a233-45ac-8140-88877fc2df04&submissionId=6a8c72ea-fb7b-863b-47da-6bf3e5e043a8&sharecode=ZvjRef9xMrJKNGLz6X485Ed7jBBOPLuEBe1Sdcigd8c](https://www.tinkercad.com/things/1FLMw0RI0Qp/editel?sharecode=3U-bvGk7_IB4qhG56tbSyutXl7edE_MXuUWwf2XKvjU))
-
+- **Simulação:** [Tinkercad - Projeto SensorLuz](https://www.tinkercad.com/things/1FLMw0RI0Qp/editel?sharecode=3U-bvGk7_IB4qhG56tbSyutXl7edE_MXuUWwf2XKvjU)
 
 ## Componentes Utilizados
 
@@ -25,47 +24,45 @@ Este projeto utiliza um sensor de luz (LDR) integrado com Arduino UNO para contr
 - **1** Buzzer
 - **1** LDR (Sensor de Luz)
 - **1** TMP (Sensor de Temperatura)
-- **1** DHT11 (Sensor de umidade)
+- **1** DHT11 (Sensor de Umidade)
 
 ## Como Funciona
 
-O projeto utiliza receptores de iluminação, temperatura e umidade, para avaliar o estado das uvas. Que através de LEDS, um buzzer e um display de LCD, podem verificar sempre manter o controle<br>
-da situação e garantir a qualidade da uva.
+O projeto utiliza sensores de luz, temperatura e umidade para avaliar o estado das condições do ambiente onde estão as uvas. Por meio de LEDs, um buzzer e um display LCD, é possível monitorar e garantir a qualidade das uvas.
 
-### Exemplo de Funcionamento:
+### Exemplo de Funcionamento
 
-- **Luminosidade IDEAL**: O LED verde acende.
-- **Luminosidade em ALERTA**: O LED amarelo acende e o buzzer toca por 3 segundos, voltando a tocar novamente após mais 3 segundos.
-- **Luminosidade com PROBLEMAS**: O LED vermelho acende e o buzzer emite um sinal contínuo.
+#### Luminosidade
+- **IDEAL**: O LED verde acende.
+- **ALERTA**: O LED amarelo acende e o buzzer toca por 3 segundos, repetindo após mais 3 segundos.
+- **PROBLEMAS**: O LED vermelho acende e o buzzer emite um sinal contínuo.
 
-- **Temperatura IDEAL**: O LED verde acende.
-- **Temperatura com PROBLEMAS**: O LED vermelho acende e o buzzer emite um sinal contínuo.
+#### Temperatura
+- **IDEAL**: O LED verde acende.
+- **PROBLEMAS**: O LED vermelho acende e o buzzer emite um sinal contínuo.
 
-- **umidade IDEAL**: O LED verde acende.
-- **umidade com PROBLEMAS**: O LED vermelho acende e o buzzer emite um sinal contínuo.
-
----
+#### Umidade
+- **IDEAL**: O LED verde acende.
+- **PROBLEMAS**: O LED vermelho acende e o buzzer emite um sinal contínuo.
 
 ## Código Explicado
 
 ### Estrutura do Código
 
 1. **Configuração de LEDs e Buzzer**:
-   - Os LEDs (vermelho, amarelo e verde) e o buzzer estão atribuídos a pinos digitais específicos.
-   - Funções auxiliares controlam o estado dos LEDs e do buzzer.
+   - LEDs (vermelho, amarelo e verde) e o buzzer são atribuídos a pinos digitais específicos.
+   - Funções auxiliares controlam os estados dos LEDs e do buzzer.
 
 2. **Função `acendeSomente`**:
-   - Simplifica o controle dos LEDs, ativando apenas o LED correspondente à condição atual e desligando os outros dois.
+   - Ativa apenas o LED correspondente à condição atual e desliga os demais.
 
 3. **Lógica Principal (`void loop`)**:
-   - O programa lê o valor do LDR para determinar a luminosidade ambiente.
-   - Com base no valor lido, as condições **IDEAL**, **ALERTA** ou **PROBLEMA** são determinadas por meio de estruturas `if-else`.
+   - Lê os valores do LDR, temperatura e umidade.
+   - Determina as condições **IDEAL**, **ALERTA** ou **PROBLEMA** usando estruturas `if-else`.
 
----
+### Trechos de Código
 
-### Detalhamento por Trechos de Código
-
-#### **Configuração Inicial (`setup`)**
+#### Configuração Inicial (`setup`)
 ```cpp
 void setup() {
   Serial.begin(9600);  // Inicializa o monitor serial para debug
@@ -76,7 +73,7 @@ void setup() {
 }
 ```
 
-#### **Função Auxiliar: `acendeSomente`**
+#### Função Auxiliar: `acendeSomente`
 ```cpp
 void acendeSomente(int led) {
   digitalWrite(vermelho, led == 10 ? HIGH : LOW);
@@ -86,10 +83,7 @@ void acendeSomente(int led) {
 ```
 Essa função ativa apenas o LED indicado e garante que os outros dois LEDs estejam desligados.
 
----
-
-#### **Lógica Principal (`void loop`)**
-
+#### Lógica Principal (`void loop`)
 1. **Leitura da Luminosidade**
    ```cpp
    int luz = analogRead(A0);  // Lê o valor do LDR
@@ -99,17 +93,16 @@ Essa função ativa apenas o LED indicado e garante que os outros dois LEDs este
    int margem_erroMAX = 970;
    unsigned long agora = millis();  // Tempo atual do loop
    ```
-   - Os valores de luminosidade são comparados com os limites definidos para determinar o estado atual.
+   - Determina o estado com base nos limites definidos.
 
 2. **Condição IDEAL**
    ```cpp
    if (luz >= ideal_min && luz <= ideal_max) {
        acendeSomente(verde);  // Liga o LED verde
        noTone(buzina);  // Desliga o buzzer
-       naoPodetocar = false;  // Libera o estado para tocar o alerta no futuro
+       naoPodetocar = false;  // Libera o alerta para tocar no futuro
    }
    ```
-   - Indica que a luminosidade está no intervalo ideal. Apenas o LED verde é ligado.
 
 3. **Condição ALERTA**
    ```cpp
@@ -140,31 +133,14 @@ Essa função ativa apenas o LED indicado e garante que os outros dois LEDs este
    ```cpp
    else {
        acendeSomente(vermelho);  // Liga o LED vermelho
-       naoPodetocar = false;  // Reseta a variável de controle do alerta
+       naoPodetocar = false;  // Reseta a variável de controle
        noTone(buzina);  // Desativa qualquer som do buzzer
-       
-       // Caso queira habilitar o som para PROBLEMA, descomente o trecho abaixo:
-       /*
-       if (agora - ultimoBeep >= 1000) {
-           ultimoBeep = agora;
-           if (beepAtivo) {
-               noTone(buzina);  // Desliga o buzzer
-           } else {
-               tone(buzina, 1000);  // Liga o buzzer a 1000 Hz
-           }
-           beepAtivo = !beepAtivo;  // Alterna o estado do beep
-       }
-       */
    }
    ```
 
----
-
 ## Como Executar
 
-1. Monte o circuito seguindo o esquema fornecido no [Tinkercad]([https://www.tinkercad.com/things/c1h5FtxbSvR/editel?returnTo=%2Fdashboard&classId=61ce3daf-e9a6-49bd-91bb-a29ab66ae1d3&assignmentId=8ca11dbd-a233-45ac-8140-88877fc2df04&submissionId=6a8c72ea-fb7b-863b-47da-6bf3e5e043a8&sharecode=ZvjRef9xMrJKNGLz6X485Ed7jBBOPLuEBe1Sdcigd8c](https://www.tinkercad.com/things/1FLMw0RI0Qp/editel?sharecode=3U-bvGk7_IB4qhG56tbSyutXl7edE_MXuUWwf2XKvjU)).
+1. Monte o circuito seguindo o esquema no [Tinkercad](https://www.tinkercad.com/things/1FLMw0RI0Qp/editel?sharecode=3U-bvGk7_IB4qhG56tbSyutXl7edE_MXuUWwf2XKvjU).
 2. Faça o upload do código para o Arduino UNO usando a IDE Arduino.
 3. Conecte o circuito ao computador ou a uma fonte de alimentação.
-4. Observe o comportamento dos LEDs e do buzzer com base na intensidade de luz.
-
-
+4. Observe o comportamento dos LEDs e do buzzer com base nas condições do ambiente.
