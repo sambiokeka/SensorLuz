@@ -134,16 +134,15 @@ void processaTEMPERATURA(float temperaturaMedia) {
   if (temperaturaMedia >= ideal_min && temperaturaMedia <= ideal_max) {
     acendeSomenteTEMPERATURA(verdeTEMPERATURA);
     casoAtualTEMPERATURA = "OK";
-    noTone(buzina);
   } else if (temperaturaMedia < ideal_min) {
     acendeSomenteTEMPERATURA(vermelhoTEMPERATURA);
     casoAtualTEMPERATURA = "BAIXA";
-    noTone(buzina);
+
     tone(buzina, 2000);
   } else if (temperaturaMedia > ideal_max) {
     acendeSomenteTEMPERATURA(vermelhoTEMPERATURA);
     casoAtualTEMPERATURA = "ALTA";
-    noTone(buzina);
+
     tone(buzina, 2000);
   }
 }
@@ -156,16 +155,16 @@ void processaUMIDADE(float umidadeMedia) {
   if (umidadeMedia >= ideal_min && umidadeMedia <= ideal_max) {
     acendeSomenteUMIDADE(verdeUMIDADE);
     casoAtualUMIDADE = "OK";
-    noTone(buzina);
+
   } else if (umidadeMedia < ideal_min) {
     acendeSomenteUMIDADE(vermelhoUMIDADE);
     casoAtualUMIDADE = "BAIXA";
-    noTone(buzina);
+
     tone(buzina, 2000);
   } else if (umidadeMedia > ideal_max) {
     acendeSomenteUMIDADE(vermelhoUMIDADE);
     casoAtualUMIDADE = "ALTA";
-    noTone(buzina);
+
     tone(buzina, 2000);
   }
 }
