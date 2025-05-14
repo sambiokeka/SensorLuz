@@ -1,6 +1,6 @@
-# Sensor de Luz
+# Sensor de Luz, Temperatura e Umidade
 
-Este projeto utiliza um sensor de luz (LDR) integrado com Arduino UNO para controlar LEDs e um buzzer com base em diferentes condições de luminosidade, temperatura e umidade.
+Este projeto utiliza sensores de luz (LDR), temperatura (TMP) e umidade (DHT11) integrados com Arduino UNO para monitorar as condições ambientais e controlar LEDs, um buzzer e um display LCD, com base em diferentes condições.
 
 ## Autores
 
@@ -25,122 +25,201 @@ Este projeto utiliza um sensor de luz (LDR) integrado com Arduino UNO para contr
 - **1** LDR (Sensor de Luz)
 - **1** TMP (Sensor de Temperatura)
 - **1** DHT11 (Sensor de Umidade)
+- **1** Display LCD com módulo I2C
 
 ## Como Funciona
 
-O projeto utiliza sensores de luz, temperatura e umidade para avaliar o estado das condições do ambiente onde estão as uvas. Por meio de LEDs, um buzzer e um display LCD, é possível monitorar e garantir a qualidade das uvas.
+O projeto utiliza sensores de luz, temperatura e umidade para avaliar as condições ambientais e exibir essas informações em um display LCD. Além disso, LEDs e um buzzer indicam o estado atual de cada parâmetro monitorado.
 
 ### Exemplo de Funcionamento
 
 #### Luminosidade
-- **IDEAL**: O LED verde acende.
-- **ALERTA**: O LED amarelo acende e o buzzer toca por 3 segundos, repetindo após mais 3 segundos.
-- **PROBLEMAS**: O LED vermelho acende e o buzzer emite um sinal contínuo.
+- **IDEAL (0% - 40%)**: O LED verde acende.
+- **ALERTA (40% - 60%)**: O LED amarelo acende, e o buzzer toca intermitentemente.
+- **PROBLEMA (> 60%)**: O LED vermelho acende, e o buzzer emite um sinal contínuo.
 
 #### Temperatura
-- **IDEAL**: O LED verde acende.
-- **PROBLEMAS**: O LED vermelho acende e o buzzer emite um sinal contínuo.
+- **IDEAL (10°C - 15°C)**: O LED verde acende.
+- **BAIXA (< 10°C)**: O LED vermelho acende, e o buzzer emite um sinal contínuo.
+- **ALTA (> 15°C)**: O LED vermelho acende, e o buzzer emite um sinal contínuo.
 
 #### Umidade
-- **IDEAL**: O LED verde acende.
-- **PROBLEMAS**: O LED vermelho acende e o buzzer emite um sinal contínuo.
+- **IDEAL (50% - 70%)**: O LED verde acende.
+- **BAIXA (< 50%)**: O LED vermelho acende, e o buzzer emite um sinal contínuo.
+- **ALTA (> 70%)**: O LED vermelho acende, e o buzzer emite um sinal contínuo.
+
+---
 
 ## Código Explicado
 
 ### Estrutura do Código
 
-1. **Configuração de LEDs e Buzzer**:
-   - LEDs (vermelho, amarelo e verde) e o buzzer são atribuídos a pinos digitais específicos.
-   - Funções auxiliares controlam os estados dos LEDs e do buzzer.
+1. **Inicialização dos Sensores e Display**:
+   - Sensores de luz, temperatura e umidade são lidos nas entradas analógicas.
+   - O display LCD com módulo I2C é configurado para exibir as informações ambientais.
 
-2. **Função `acendeSomente`**:
-   - Ativa apenas o LED correspondente à condição atual e desliga os demais.
+2. **Uso de Buffers para Médias**:
+   - Buffers são utilizados para calcular a média dos valores lidos, garantindo maior estabilidade nas medições.
 
-3. **Lógica Principal (`void loop`)**:
-   - Lê os valores do LDR, temperatura e umidade.
-   - Determina as condições **IDEAL**, **ALERTA** ou **PROBLEMA** usando estruturas `if-else`.
+3. **Controle dos LEDs e Buzzer**:
+   - LEDs e o buzzer indicam as condições de **IDEAL**, **ALERTA** ou **PROBLEMA** para cada parâmetro monitorado.
 
-### Trechos de Código
+4. **Função `processaLUZ`**:
+   - Determina o estado da luminosidade com base na média calculada.
+   - Controla os LEDs e o buzzer para indicar o estado.
+
+5. **Função `processaTEMPERATURA`**:
+   - Determina o estado da temperatura com base na média calculada.
+   - Controla os LEDs e o buzzer para indicar o estado.
+
+6. **Função `processaUMIDADE`**:
+   - Determina o estado da umidade com base na média calculada.
+   - Controla os LEDs e o buzzer para indicar o estado.
+
+7. **Atualização do Display LCD**:
+   - Exibe no LCD as condições ambientais atuais para a luminosidade, temperatura e umidade.
+
+---
+
+### Detalhamento por Trechos de Código
 
 #### Configuração Inicial (`setup`)
 ```cpp
 void setup() {
-  Serial.begin(9600);  // Inicializa o monitor serial para debug
-  pinMode(buzina, OUTPUT);  // Define o buzzer como saída
-  pinMode(vermelho, OUTPUT);  // Define o LED vermelho como saída
-  pinMode(amarelo, OUTPUT);  // Define o LED amarelo como saída
-  pinMode(verde, OUTPUT);  // Define o LED verde como saída
+  Serial.begin(9600);
+
+  lcd.init();
+  lcd.backlight();
+  lcd.clear();
+
+  pinMode(buzina, OUTPUT);
+
+  pinMode(vermelhoLUZ, OUTPUT);
+  pinMode(amareloLUZ, OUTPUT);
+  pinMode(verdeLUZ, OUTPUT);
+
+  pinMode(vermelhoTEMPERATURA, OUTPUT);
+  pinMode(verdeTEMPERATURA, OUTPUT);
+
+  pinMode(vermelhoUMIDADE, OUTPUT);
+  pinMode(verdeUMIDADE, OUTPUT);
+
+  inicializaBuffers();
 }
 ```
 
-#### Função Auxiliar: `acendeSomente`
+#### Cálculo de Média com Buffers
 ```cpp
-void acendeSomente(int led) {
-  digitalWrite(vermelho, led == 10 ? HIGH : LOW);
-  digitalWrite(amarelo,  led == 9 ? HIGH : LOW);
-  digitalWrite(verde,    led == 8 ? HIGH : LOW); 
+float calculaMedia(int buffer[], int tamanho) {
+  int soma = 0;
+  for (int i = 0; i < tamanho; i++) {
+    soma += buffer[i];
+  }
+  return soma / (float)tamanho;
 }
 ```
-Essa função ativa apenas o LED indicado e garante que os outros dois LEDs estejam desligados.
+- Essa função calcula a média dos valores armazenados no buffer, permitindo maior estabilidade nas leituras.
 
-#### Lógica Principal (`void loop`)
-1. **Leitura da Luminosidade**
-   ```cpp
-   int luz = analogRead(A0);  // Lê o valor do LDR
-   int ideal_min = 900;
-   int ideal_max = 950;
-   int margem_erroMIN = 100;
-   int margem_erroMAX = 970;
-   unsigned long agora = millis();  // Tempo atual do loop
-   ```
-   - Determina o estado com base nos limites definidos.
+#### Controle da Luminosidade (`processaLUZ`)
+```cpp
+void processaLUZ(float luzMedia, unsigned long agora) {
+  int ideal_min = 0;
+  int ideal_max = 40;
+  int margem_erroMIN = 0;
+  int margem_erroMAX = 60;
 
-2. **Condição IDEAL**
-   ```cpp
-   if (luz >= ideal_min && luz <= ideal_max) {
-       acendeSomente(verde);  // Liga o LED verde
-       noTone(buzina);  // Desliga o buzzer
-       naoPodetocar = false;  // Libera o alerta para tocar no futuro
-   }
-   ```
+  if (luzMedia >= ideal_min && luzMedia <= ideal_max) {
+    acendeSomenteLUZ(verdeLUZ);
+    noTone(buzina);
+    naoPodetocar = false;
+    casoAtualLUZ = "OK";
+  } else if ((luzMedia > ideal_max && luzMedia < margem_erroMAX) || (luzMedia < ideal_min && luzMedia > margem_erroMIN)) {
+    acendeSomenteLUZ(amareloLUZ);
+    if (naoPodetocar == false) {
+      tone(buzina, 200);
+      tempoAnterior = agora;
+      buzinaLigada = true;
+      naoPodetocar = true;
+    }
+    if (agora - tempoAnterior >= 3000) {
+      tempoAnterior = agora;
+      if (buzinaLigada) {
+        noTone(buzina);
+        buzinaLigada = false;
+      } else {
+        tone(buzina, 200);
+        buzinaLigada = true;
+      }
+    }
+    casoAtualLUZ = "ALERTA";
+  } else {
+    acendeSomenteLUZ(vermelhoLUZ);
+    naoPodetocar = false;
+    noTone(buzina);
+    tone(buzina, 2000);
+    casoAtualLUZ = "PROBLEMA";
+  }
+}
+```
 
-3. **Condição ALERTA**
-   ```cpp
-   else if ((luz > ideal_max && luz < margem_erroMAX) || (luz < ideal_min && luz > margem_erroMIN)) {
-       acendeSomente(amarelo);  // Liga o LED amarelo
+#### Atualização do Display LCD
+```cpp
+void atualizaDisplay(float luzMedia, float temperaturaMedia, float umidadeMedia) {
+  unsigned long agora = millis();
 
-       if (!naoPodetocar) {
-           tone(buzina, 200);  // Toca o buzzer a 200 Hz
-           tempoAnterior = agora;  // Atualiza o temporizador
-           buzinaLigada = true;
-           naoPodetocar = true;  // Impede reativação imediata do alerta
-       }
+  if (agora - tempoDisplayAnterior >= 5000) {
+    tempoDisplayAnterior = agora;
+    estadoDisplay = (estadoDisplay + 1) % 3;
+  }
 
-       if (agora - tempoAnterior >= 3000) {
-           tempoAnterior = agora;
-           if (buzinaLigada) {
-               noTone(buzina);  // Desliga o buzzer
-               buzinaLigada = false;
-           } else {
-               tone(buzina, 200);  // Liga o buzzer
-               buzinaLigada = true;
-           }
-       }
-   }
-   ```
+  String linha1, linha2;
 
-4. **Condição PROBLEMA**
-   ```cpp
-   else {
-       acendeSomente(vermelho);  // Liga o LED vermelho
-       naoPodetocar = false;  // Reseta a variável de controle
-       noTone(buzina);  // Desativa qualquer som do buzzer
-   }
-   ```
+  switch (estadoDisplay) {
+    case 0:
+      linha1 = "Luz: " + String(luzMedia, 1) + "%";
+      linha2 = (casoAtualLUZ == "OK") ? "Luz Ideal!" : 
+               (casoAtualLUZ == "ALERTA") ? "Meia Luz!" : 
+               "Muita Luz!";
+      break;
+
+    case 1:
+      linha1 = "Temp.: " + String(temperaturaMedia, 1) + "C";
+      linha2 = (casoAtualTEMPERATURA == "OK") ? "Temp. Ideal!" : 
+               (casoAtualTEMPERATURA == "BAIXA") ? "Temp. Baixa!" : 
+               "Temp. Alta!";
+      break;
+
+    case 2:
+      linha1 = "Umidade: " + String(umidadeMedia, 1) + "%";
+      linha2 = (casoAtualUMIDADE == "OK") ? "Umidade Ideal!" : 
+               (casoAtualUMIDADE == "BAIXA") ? "Umidade Baixa!" : 
+               "Umidade Alta!";
+      break;
+  }
+
+  if (linha1 != textoAnteriorLinha1) {
+    lcd.setCursor(0, 0);
+    lcd.print("                ");
+    lcd.setCursor(0, 0);
+    lcd.print(linha1);
+    textoAnteriorLinha1 = linha1;
+  }
+
+  if (linha2 != textoAnteriorLinha2) {
+    lcd.setCursor(0, 1);
+    lcd.print("                ");
+    lcd.setCursor(0, 1);
+    lcd.print(linha2);
+    textoAnteriorLinha2 = linha2;
+  }
+}
+```
+
+---
 
 ## Como Executar
 
 1. Monte o circuito seguindo o esquema no [Tinkercad](https://www.tinkercad.com/things/1FLMw0RI0Qp/editel?sharecode=3U-bvGk7_IB4qhG56tbSyutXl7edE_MXuUWwf2XKvjU).
 2. Faça o upload do código para o Arduino UNO usando a IDE Arduino.
 3. Conecte o circuito ao computador ou a uma fonte de alimentação.
-4. Observe o comportamento dos LEDs e do buzzer com base nas condições do ambiente.
+4. Observe o comportamento dos LEDs, o buzzer e o display LCD com base nas condições ambientais.
