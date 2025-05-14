@@ -39,14 +39,14 @@ O projeto utiliza sensores de luz, temperatura e umidade para avaliar as condiç
 - **PROBLEMA (> 60%)**: O LED vermelho acende, e o buzzer emite um sinal contínuo.
 
 #### Temperatura
-- **IDEAL (11°C - 15°C)**: O LED verde acende.
-- **BAIXA (< 11°C)**: O LED vermelho acende, e o buzzer emite um sinal contínuo.
+- **IDEAL (10°C - 15°C)**: O LED verde acende.
+- **BAIXA (< 10°C)**: O LED vermelho acende, e o buzzer emite um sinal contínuo.
 - **ALTA (> 15°C)**: O LED vermelho acende, e o buzzer emite um sinal contínuo.
 
 #### Umidade
-- **IDEAL (60% - 80%)**: O LED verde acende.
-- **BAIXA (< 60%)**: O LED vermelho acende, e o buzzer emite um sinal contínuo.
-- **ALTA (> 80%)**: O LED vermelho acende, e o buzzer emite um sinal contínuo.
+- **IDEAL (50% - 70%)**: O LED verde acende.
+- **BAIXA (< 50%)**: O LED vermelho acende, e o buzzer emite um sinal contínuo.
+- **ALTA (> 70%)**: O LED vermelho acende, e o buzzer emite um sinal contínuo.
 
 ---
 
