@@ -13,28 +13,36 @@ Este projeto utiliza um sensor de luz (LDR) integrado com Arduino UNO para contr
 
 - **Linguagem de programação:** C++
 - **Placa:** Arduino UNO
-- **Simulação:** [Tinkercad - Projeto SensorLuz](https://www.tinkercad.com/things/c1h5FtxbSvR/editel?returnTo=%2Fdashboard&classId=61ce3daf-e9a6-49bd-91bb-a29ab66ae1d3&assignmentId=8ca11dbd-a233-45ac-8140-88877fc2df04&submissionId=6a8c72ea-fb7b-863b-47da-6bf3e5e043a8&sharecode=ZvjRef9xMrJKNGLz6X485Ed7jBBOPLuEBe1Sdcigd8c)
+- **Simulação:** [Tinkercad - Projeto SensorLuz]([https://www.tinkercad.com/things/c1h5FtxbSvR/editel?returnTo=%2Fdashboard&classId=61ce3daf-e9a6-49bd-91bb-a29ab66ae1d3&assignmentId=8ca11dbd-a233-45ac-8140-88877fc2df04&submissionId=6a8c72ea-fb7b-863b-47da-6bf3e5e043a8&sharecode=ZvjRef9xMrJKNGLz6X485Ed7jBBOPLuEBe1Sdcigd8c](https://www.tinkercad.com/things/1FLMw0RI0Qp/editel?sharecode=3U-bvGk7_IB4qhG56tbSyutXl7edE_MXuUWwf2XKvjU))
 
 
 ## Componentes Utilizados
 
-- **1** Resistor de 10kΩ (para o LDR)
-- **1** Resistor de 1kΩ (para o Buzzer)
-- **3** Resistores de 220Ω (para os LEDs)
-- **9** Jumpers
-- **3** LEDs (Vermelho, Amarelo, Verde)
+- **1** Resistor de 1kΩ (para o LDR)
+- **7** Resistores de 220Ω (para os LEDs)
+- **24** Jumpers
+- **7** LEDs (Vermelho, Amarelo, Verde)
 - **1** Buzzer
 - **1** LDR (Sensor de Luz)
+- **1** TMP (Sensor de Temperatura)
+- **1** DHT11 (Sensor de umidade)
 
 ## Como Funciona
 
-O projeto utiliza um LDR (sensor de luz) para medir a intensidade da luz ambiente. Com base nos valores medidos, o Arduino controla LEDs e um buzzer para indicar diferentes condições de luminosidade.
+O projeto utiliza receptores de iluminação, temperatura e umidade, para avaliar o estado das uvas. Que através de LEDS, um buzzer e um display de LCD, podem verificar sempre manter o controle<br>
+da situação e garantir a qualidade da uva.
 
 ### Exemplo de Funcionamento:
 
 - **Luminosidade IDEAL**: O LED verde acende.
-- **Luminosidade em ALERTA**: O LED amarelo acende e o buzzer toca intermitentemente.
-- **Luminosidade com PROBLEMAS**: O LED vermelho acende e o buzzer pode ser configurado para emitir um sinal contínuo (desativado por padrão).
+- **Luminosidade em ALERTA**: O LED amarelo acende e o buzzer toca por 3 segundos, voltando a tocar novamente após mais 3 segundos.
+- **Luminosidade com PROBLEMAS**: O LED vermelho acende e o buzzer emite um sinal contínuo.
+
+- **Temperatura IDEAL**: O LED verde acende.
+- **Temperatura com PROBLEMAS**: O LED vermelho acende e o buzzer emite um sinal contínuo.
+
+- **umidade IDEAL**: O LED verde acende.
+- **umidade com PROBLEMAS**: O LED vermelho acende e o buzzer emite um sinal contínuo.
 
 ---
 
@@ -154,7 +162,7 @@ Essa função ativa apenas o LED indicado e garante que os outros dois LEDs este
 
 ## Como Executar
 
-1. Monte o circuito seguindo o esquema fornecido no [Tinkercad](https://www.tinkercad.com/things/c1h5FtxbSvR/editel?returnTo=%2Fdashboard).
+1. Monte o circuito seguindo o esquema fornecido no [Tinkercad]([https://www.tinkercad.com/things/c1h5FtxbSvR/editel?returnTo=%2Fdashboard&classId=61ce3daf-e9a6-49bd-91bb-a29ab66ae1d3&assignmentId=8ca11dbd-a233-45ac-8140-88877fc2df04&submissionId=6a8c72ea-fb7b-863b-47da-6bf3e5e043a8&sharecode=ZvjRef9xMrJKNGLz6X485Ed7jBBOPLuEBe1Sdcigd8c](https://www.tinkercad.com/things/1FLMw0RI0Qp/editel?sharecode=3U-bvGk7_IB4qhG56tbSyutXl7edE_MXuUWwf2XKvjU)).
 2. Faça o upload do código para o Arduino UNO usando a IDE Arduino.
 3. Conecte o circuito ao computador ou a uma fonte de alimentação.
 4. Observe o comportamento dos LEDs e do buzzer com base na intensidade de luz.
