@@ -11,6 +11,7 @@ LiquidCrystal_I2C lcd(ende, col, lin);
 
 DHT dht(DHTPIN, DHTTYPE);
 int umidade;
+int temperatura;
 
 int vermelhoLUZ = 10;
 int amareloLUZ = 9;
@@ -263,7 +264,7 @@ void setup() {
 
 void loop() {
   int luz = analogRead(A0);
-  int temperatura = dht.readTemperature();
+  temperatura = dht.readTemperature();
   umidade = dht.readHumidity();
 
   int luzAjustada = map(constrain(luz, 6, 679), 6, 679, 0, 100);
