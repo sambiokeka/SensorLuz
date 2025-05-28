@@ -263,12 +263,12 @@ void setup() {
 
 void loop() {
   int luz = analogRead(A0);
-  int temperatura = analogRead(A1);
+  int temperatura = dht.readTemperature();
   umidade = dht.readHumidity();
 
   int luzAjustada = map(constrain(luz, 6, 679), 6, 679, 0, 100);
-  int temperaturaAjustada = map(constrain(temperatura, 20, 358), 20, 358, -40, 125);
-  int umidadeAjustada = map(constrain(umidade, 0, 26), 0, 26, 0, 100);
+  int temperaturaAjustada = temperatura;
+  int umidadeAjustada = umidade;
   Serial.println(umidade);
   float luzMedia, temperaturaMedia, umidadeMedia;
   atualizaMedias(luzAjustada, temperaturaAjustada, umidadeAjustada, luzMedia, temperaturaMedia, umidadeMedia);
